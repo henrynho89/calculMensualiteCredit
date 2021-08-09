@@ -14,7 +14,10 @@ import banque.serviceImpl.CreditMetierImpl;
 @WebServlet(name = "cs", urlPatterns = {"*.do","*.php","*.asp"})
 public class ControleurServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
 	ICreditMetier creditMetier;
+	CreditModel creditModel;
+	
     
     @Override
     public void init() throws ServletException {
@@ -23,7 +26,26 @@ public class ControleurServlet extends HttpServlet {
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("vueCredit.jsp").forward(request, response);
+		
+		String path = request.getContextPath();
+		if("".equals(path)) {
+			request.getRequestDispatcher("vueCredit.jsp").forward(request, response);
+		}
+		else if("calculer.do".equals(path)) {
+			double montant = Double.parseDouble(request.getParameter("montant"));
+			double taux = Double.parseDouble(request.getParameter("montant"));
+			int duree = Integer.parseInt(request.getParameter("duree"));
+			double mensualite = creditMetier.CalculMensualiteCredit(montant, taux, duree);
+			
+			creditModel = new CreditModel();
+			creditModel.setMontant(montant);
+			creditModel.setDuree(duree);
+			creditModel.setTaux(taux);
+			creditModel.setMensualite(mensualite);
+			
+			request.setAttribute("creditModel", creditModel);
+			
+		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
