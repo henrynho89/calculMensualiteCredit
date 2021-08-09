@@ -26,12 +26,13 @@ public class ControleurServlet extends HttpServlet {
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		request.setAttribute("creditModel", new CreditModel());
+		request.getRequestDispatcher("vueCredit.jsp").forward(request, response);
 		String path = request.getContextPath();
-		if("".equals(path)) {
+		if("hh".equals(path)) {
 			request.getRequestDispatcher("vueCredit.jsp").forward(request, response);
 		}
-		else if("calculer.do".equals(path)) {
+		else if("calcul.do".equals(path) ) {
 			double montant = Double.parseDouble(request.getParameter("montant"));
 			double taux = Double.parseDouble(request.getParameter("montant"));
 			int duree = Integer.parseInt(request.getParameter("duree"));
@@ -45,12 +46,27 @@ public class ControleurServlet extends HttpServlet {
 			
 			request.setAttribute("creditModel", creditModel);
 			
+			request.getRequestDispatcher("vueCredit.jsp").forward(request, response);
+			
 		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		doGet(request, response);
+		double montant = Double.parseDouble(request.getParameter("montant"));
+		double taux = Double.parseDouble(request.getParameter("taux"));
+		int duree = Integer.parseInt(request.getParameter("duree"));
+		double mensualite = creditMetier.CalculMensualiteCredit(montant, taux, duree);
+		
+		creditModel = new CreditModel();
+		creditModel.setMontant(montant);
+		creditModel.setDuree(duree);
+		creditModel.setTaux(taux);
+		creditModel.setMensualite(mensualite);
+		
+		request.setAttribute("creditModel", creditModel);
+		
+		request.getRequestDispatcher("vueCredit.jsp").forward(request, response);
 	}
 
 }
