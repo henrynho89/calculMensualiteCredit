@@ -46,7 +46,7 @@ public class ControleurServlet extends HttpServlet {
 			
 			request.setAttribute("creditModel", creditModel);
 			
-			request.getRequestDispatcher("vueCredit.jsp").forward(request, response);
+			this.getServletContext().getRequestDispatcher("vueCredit.jsp").forward(request, response);
 			
 		}
 	}
